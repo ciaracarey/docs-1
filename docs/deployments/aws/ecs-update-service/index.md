@@ -4,10 +4,10 @@ description: Update an existing Amazon ECS Service.
 ---
 
 Octopus supports deploying a new release to an existing ECS Service through the `Update Amazon ECS Service` step.
-This step provides an opinionated deployment workflow that allows new released to be deployed to an ECS Cluster that is managed externally, for example manually or via Terraform.
+This step provides an opinionated deployment workflow that allows new releases to be deployed to an ECS Cluster that is managed externally, for example manually or via Terraform.
 
 :::hint
-The `Update Amazon ECS Step` was added in Octopus **2021.3**. Presently only **Fargate** clusters are supported.
+The `Update Amazon ECS Service` step was added in Octopus **2021.3**. Presently only **Fargate** clusters are supported.
 :::
 
 At a high level, the `Update Amazon ECS Service` step will:
@@ -17,7 +17,7 @@ At a high level, the `Update Amazon ECS Service` step will:
 * Create a new Task Definition revision based on the template definition and the step configuration provided.
 * Update the Service to use the newly created Task Definition.
 
-The following instructions can be followed to configure the `Update Amazon ECS Service` step.
+The following instructions can be used to configure the `Update Amazon ECS Service` step.
 
 ## Step 1: Make a note of your ECS cluster's settings
 
@@ -47,7 +47,7 @@ The benefits of using deployment targets for ECS are outlined in the [ECS RFC bl
 
 Add the `Update Amazon ECS Service` step to the project, and provide it a name.
 
-As the step is using a deployment target a target role will also need to be specified.
+As the step is using a deployment target, a target role will also need to be specified.
 The role will be used to determine which ECS cluster to deploy to.
 Use the same role that you applied to your deployment target in Step 2.
 
@@ -56,7 +56,7 @@ Use the same role that you applied to your deployment target in Step 2.
 ### Configuration section
 
 Specify the name of your Destination Task Definition.
-This is the task definition that will receive a new revision upon deploy.
+This is the task definition that will receive a new revision upon deployment.
 
 Optionally, specify the name of the Template Task Definition.
 If provided, this task definition will be used as a template for the new task definition.
@@ -73,7 +73,7 @@ At least one container definition must be specified when updating a task definit
 
 ![Update ECS Step Container Definitions Section](images/update-ecs-container-definitions.png "width=500")
 
-Specify the container name that will be used to locate the container definition within your task and select a feed and image that will be run by your task.
+Specify the container name that will be used to locate the container definition within your task and select a feed and image that your task will run.
 The specific image version will be specified later, when creating a release.
 
 ![ECS Step Container Definition Parameters](images/update-ecs-container-definition.png "width=500")
@@ -81,7 +81,7 @@ The specific image version will be specified later, when creating a release.
 #### Environment Files
 
 List up to 10 environment files to be added to the container.
-Environment files should be stored in S3, they must have a ".env" extension, and each line should contain a "VARIABLE=VALUE" variable definition.
+Environment files should be stored in S3, they must have a ".env" extension, and each line should contain a `VARIABLE=VALUE` variable definition.
 
 The configured environment file list can be used to either completely replace or be appended to the container's existing environment file list.
 
@@ -92,7 +92,7 @@ Each environment file has a type to configure the storage device (S3 is currentl
 #### Environment Variables
 
 You can add either plain text or secret environment variables to the container.
-Plain text environment variables will use the value provided, while secret variables refer to a secret value stored in the AWS Secrets Manager.
+Plain text environment variables will use the value provided, while secret variables refer to a secret value stored in AWS Secrets Manager.
 
 The configured environment variables can either completely replace the container's existing environment variables or be merged with them.
 Merging environment variables will add any new variables and overwrite the value of any existing variables with the same key.
@@ -122,22 +122,14 @@ Any of the input fields can be bound to an Octostache expression. [Variable subs
 
 ### Output variables
 
-Presently, the step does outputs the following variables.
+The step outputs the following variables:
 
-TaskDefinitionRevision
-: The revision number of the newly created task (if a new revision was created)
-
-TaskDefinitionFamily
-: The name of a family that the new task definition is registered to (if a new revision was created)
-
-ClusterName
-: The name of the cluster to which the updated service belongs
-
-ServiceName
-: The name of the updated service
-
-Region
-: The AWS region in which the operations were executed
+| Name | Description |
+| -------------------- | -------|
+|`TaskDefinitionRevision` | The revision number of the newly created task (if a new revision was created) |
+|`TaskDefinitionFamily` | The name of a family that the new task definition is registered to (if a new revision was created) |
+|`ClusterName` | The name of the cluster to which the updated service belongs |
+|`Region` | The AWS region in which the operations were executed |
 
 ## Error messages
 
